@@ -39,5 +39,10 @@ update-grub-config:
 grub-mkconfig:
   cmd.run:
     - name: {{ grub_settings.lookup.update_grub_cmd }}
-    - watch:
+    - require:
+      - file: /etc/grub.d/99_salt
+    - onchanges:
+      - file: /etc/grub.d/99_salt
+      {% if 'config_file' in grub_settings.lookup and 'changes' in grub_settings.config %}
       - augeas: update-grub-config
+      {% endif %}
